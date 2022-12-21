@@ -1,6 +1,5 @@
 #![no_std]
 elrond_wasm::imports!();
-elrond_wasm::derive_imports!();
 
 const YEAR_IN_SECONDS : u64 = 360 * 24 * 60 * 60;
 const PERCENTAGE : u64 = 100;
