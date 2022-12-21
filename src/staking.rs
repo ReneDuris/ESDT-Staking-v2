@@ -3,7 +3,7 @@ elrond_wasm::imports!();
 elrond_wasm::derive_imports!();
 
 const YEAR_IN_SECONDS : u64 = 360 * 24 * 60 * 60;
-
+const PERCENTAGE : u64 = 100;
 #[elrond_wasm::contract]
 pub trait Staking: 
       {
@@ -111,6 +111,7 @@ pub trait Staking:
       self.total_staked().update(|value| * value += &rewards);
     }
   
+//ensures safety of rewards. If there are no rewards provided for contract, it will throw error
       fn safe_rewards(&self, staker: &ManagedAddress)-> BigUint{
       let supplied_rewards_mapper = self.supplied_rewards();
       let rewards = self.calculate_reward(&staker);
@@ -120,6 +121,7 @@ pub trait Staking:
       rewards
       }
 
+//saving reward per second into acumulator
     fn rps(&self){
       let current_time = self.blockchain().get_block_timestamp();
       let rps = self.rps_calculated();
@@ -127,16 +129,18 @@ pub trait Staking:
       self.apr_last_time().set(current_time);
     }
 
+//calculated reward per second with current APR
     fn rps_calculated(&self) -> BigUint{
       let current_time = self.blockchain().get_block_timestamp();
       self.apr_last_time().set_if_empty(current_time);
       let apr_last_time = self.apr_last_time().get();
       let current_apr = self.apr().get();
       let diff_time = (current_time + 1u64) - apr_last_time;
-      let rps_calculated = BigUint::from(current_apr *diff_time /100);
+      let rps_calculated = BigUint::from(current_apr *diff_time / PERCENTAGE);
       rps_calculated
     }
   
+// Saving current share position for staker
     fn save_position(&self, staker : &ManagedAddress){
       let rps_acumulated = self.rps_acumulated().get();
       let rps = rps_acumulated + self.rps_calculated();
@@ -144,6 +148,7 @@ pub trait Staking:
 
     }
 
+// Actual calculation of reward for staker
     #[view(reward)]
     fn calculate_reward(&self, staker: &ManagedAddress) -> BigUint{
       let my_stake = self.is_not_empty(self.staked_amount(staker));
