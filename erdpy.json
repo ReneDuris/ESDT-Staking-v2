@@ -1,0 +1,38 @@
+{
+    "configurations": {
+        "default": {
+            "proxy": "https://devnet-api.elrond.com",
+            "chainID": "D"
+        }
+    },
+    "contract":{
+        "deploy":{
+            "verbose": true,
+            "bytecode": "output/staking.wasm",
+            "recall-nonce": true,
+            "pem": "../wallet.pem",
+            "gas-limit": 60000000,
+            "arguments": [
+                "str:DSUPER-9af8df", 
+                "100",
+                "259200"
+            ],
+            "send": true,
+            "outfile": "StakingSC.json"
+        },
+        "update":{
+            "verbose": true,
+            "bytecode": "output/staking.wasm",
+            "recall-nonce": true,
+            "pem": "../wallet.pem",
+            "gas-limit": 60000000,
+            "arguments": [
+                "str:DSUPER-9af8df", 
+                "100",
+                "259200"
+            ],
+            "send": true,
+            "outfile": "StakingSC.json"
+        }
+     }
+}
